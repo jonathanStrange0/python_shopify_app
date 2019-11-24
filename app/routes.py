@@ -37,7 +37,8 @@ def shopify():
         scope = ["write_products", "read_products"] #may add more later
 
         #Generate the permissions url:
-        permission_url = shop_session.create_permission_url(scope, url_for('callback', _external=True))
+        permission_url = shop_session.create_permission_url(scope, 'https://865d5792.ngrok.io/callback')#url_for('callback', _external=True))
+        print(url_for('callback', _external=True))
         print('Permission URL: ', permission_url)
         #TODO: Fix this redirect, it don't work yo.
         return(redirect(permission_url))
@@ -45,7 +46,7 @@ def shopify():
         return 'Missing shop parameter. Please add ?shop=your-development-shop.myshopify.com to your request'
 
 
-@app.route('/shopify/callback')
+@app.route('/callback')
 def callback():
     # TODO: After install/auth return the homepage of the app
     # that will be embedded in the user's store.

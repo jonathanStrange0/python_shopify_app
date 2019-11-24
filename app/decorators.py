@@ -25,7 +25,7 @@ def shopify_auth_required(function):
                 session.pop("shopify_token")
                 session.pop("shopify_url")
                 session.pop("shopify_id")
-                return redirect(url_for('shopify_bp.install', **request.args))
+                return redirect(url_for('app.shopify', **request.args))
             except Exception as e:
                 return('There has been an error: ', e)
 
