@@ -1,3 +1,4 @@
-.evn
+.env
 venv
 config.py
+*.json

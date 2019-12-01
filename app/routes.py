@@ -3,8 +3,9 @@ import shopify as sfy
 from flask import session, redirect, url_for, request, current_app, render_template
 from app.decorators import shopify_auth_required
 from dotenv import load_dotenv
-import os, requests
+import os, requests, json
 from pprint import pprint
+from app.graphql_uploads import upload_customer
 
 @app.route('/')
 @app.route('/index')
@@ -81,10 +82,16 @@ def callback():
           }
         }
       '''
+    all_customers = None
+    with open('customers.json', 'r') as f:
+        all_customers = json.load(f)
+    print(type(all_customers[0]['ContactFirstName']))
+    cust = upload_customer(all_customers[0], shop_session)
     # result = client.execute(query)
     # return render_template('index.html', result=result)
     shopRequestURL = 'https://' + request.args.get('shop') +'/admin/api/2019-04/products.json'
     shopRequestHeaders = {'X-Shopify-Access-Token' : token}
-    return(requests.get(shopRequestURL,headers=shopRequestHeaders).json())
+    # return(requests.get(shopRequestURL,headers=shopRequestHeaders).json())
     # return('Successfully redirected')
+    return cust
 # query = '''{shop {name id}}'''
