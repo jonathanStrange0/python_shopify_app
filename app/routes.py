@@ -1,9 +1,10 @@
 from app import app
 import shopify as sfy
-from flask import session, redirect, url_for, request, current_app
+from flask import session, redirect, url_for, request, current_app, render_template
 from app.decorators import shopify_auth_required
 from dotenv import load_dotenv
 import os, requests
+from pprint import pprint
 
 @app.route('/')
 @app.route('/index')
@@ -33,7 +34,9 @@ def shopify():
         print('shopify session: ', shop_session)
 
         #Define the access scopes the app would like to have
-        scope = ["write_products", "read_products"] #may add more later
+        scope = ["write_products", "read_products",\
+                    'read_orders','write_orders',\
+                     'write_customers','read_customers'] #may add more later
 
         #Generate the permissions url:
         permission_url = shop_session.create_permission_url(scope, url_for('callback', _external=True, _scheme='https'))
@@ -78,16 +81,10 @@ def callback():
           }
         }
       '''
-    result = client.execute(query)
-    return(result)
-    # shopRequestURL = 'https://' + request.args.get('shop') +'/admin/api/2019-04/shop.json'
-    # shopRequestHeaders = {'X-Shopify-Access-Token' : session['shopify_token']}
-    # return(requests.get(shopRequestURL,headers=shopRequestHeaders))
+    # result = client.execute(query)
+    # return render_template('index.html', result=result)
+    shopRequestURL = 'https://' + request.args.get('shop') +'/admin/api/2019-04/products.json'
+    shopRequestHeaders = {'X-Shopify-Access-Token' : token}
+    return(requests.get(shopRequestURL,headers=shopRequestHeaders).json())
     # return('Successfully redirected')
-    # pass
-
-# https://3e3f2fc9.ngrok.io/callback?
-# code=171126f2fd57c7036997bac9f912de32&
-# hmac=10fa21b4d10dde5acf9a344f87d82dfd7e1cf13f8382bb22d20feb3ced288d87&
-# shop=forecast-store.myshopify.com&
-# timestamp=1574634978
+# query = '''{shop {name id}}'''

@@ -1,0 +1,19 @@
+<html>
+    <head>
+      <meta charset="utf-8"/>
+      {% if title %}
+      <title>{{ title }} - Python Shopify Test</title>
+      {% else %}
+      <title>testing a flask embedded shopify app</title>
+      {% endif %}
+    </head>
+    <body>
+        <div>
+          <a href="/index">Home</a>
+          <!-- <a href="/sample_labels">Print Sample Labels</a>
+          <a href="/new_product">Create New Products</a> -->
+        </div>
+        <hr>
+        {% block content %}{% endblock %}
+    </body>
+</html>
