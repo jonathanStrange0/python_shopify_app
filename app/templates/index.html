@@ -1,7 +1,20 @@
 {% extends "base.html" %}
 	{% block content %}
-    {{ result }}
-
+	<form action="" method="post">
+		{{ form.hidden_tag() }}
+		{{ form.csrf_token }}
+		<div>
+			<p>
+				{{ form.number_of_customers_field.label }}	 <br>
+				{{ form.number_of_customers_field }}
+			</p>
+			<p>
+				{{ form.number_of_products_field.label }}<br>
+				{{ form.number_of_products_field }} <br>
+			</p>
+			<p> {{ form.submit_button }}
+		</div>
+	</form>
 
 
   {% endblock %}

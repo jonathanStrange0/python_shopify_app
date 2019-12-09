@@ -16,7 +16,8 @@ def generate_fake_customer_data(records_to_create):
                                                 range(0,records_to_create)]
     last_name_list = ['TC{} Last Name'.format(x) for x in\
                                                 range(0,records_to_create)]
-    return first_name_list, last_name_list
+    upload_all_customers(first_name_list, last_name_list)
+    print(first_name_list)
 
 def upload_customer_data(first_name, last_name):
     """
@@ -65,7 +66,7 @@ def generate_fake_product_data(records_to_create):
     # description_html_list =
     pass
 
-def upload_product_data(prod_name, max_variants):
+def upload_product_data(prod_name, max_variants=10):
     """
         Upload a single product to the shop
         input:
@@ -123,6 +124,7 @@ def upload_product_data(prod_name, max_variants):
                             }
 
                         '''
+    print(sfy.ShopifyResource.get_site())
     client = sfy.GraphQL()
     product_results = json.loads(client.execute(product_mutation))
     # print(product_results)
@@ -170,6 +172,7 @@ def create_fake_products_and_variants(num_prod, max_variants):
     prod_name_list = ['Test Product Num: {}'.format(x) for x in\
                                                 range(0,num_prod)]
 
+    return(list(map(upload_product_data, prod_name_list, [max_variants] * num_prod)))
 
 def generate_fake_order_data(records_to_create):
     pass

@@ -7,12 +7,22 @@ import os, requests, json
 from pprint import pprint
 from app.graphql_uploads import upload_customer
 from app.generate_fake_shopify_data import generate_fake_customer_data, upload_all_customers,\
-                                upload_customer_data, upload_product_data, generate_fake_variant
-@app.route('/')
-@app.route('/index')
-# @shopify_auth_required
+                                upload_customer_data, upload_product_data, generate_fake_variant, create_fake_products_and_variants
+from app.forms import FakeDataForm
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
 def index():
-    return 'Hello World'
+    shop_session = sfy.Session(session['shop_url'], '2019-04', session['token'])
+    # activate the shopify session to use resources.
+    sfy.ShopifyResource.activate_session(shop_session)
+    form = FakeDataForm()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            generate_fake_customer_data(form.number_of_customers_field.data)
+            create_fake_products_and_variants(form.number_of_products_field.data, 5)
+
+    return render_template('index.html', form=form)
+
 
 @shopify_auth_required
 @app.route('/shopify')
@@ -52,8 +62,6 @@ def shopify():
 
 @app.route('/callback')
 def callback():
-    #TODO: Perform security checks
-
     #setup new shopify session:
     shop_url = request.args.get('shop')
     sfy.Session.setup(
@@ -65,39 +73,13 @@ def callback():
 
     # Get access Token
     token = shop_session.request_token(request.args)
-    print('Token: ', token)
-    # return('generated a shopify access token, now let\'s do something with it')
+    #adding the shop_url and token to the flask session for future great ideas
+    session['token'] = token
+    session['shop_url'] = shop_url
+    # Get a session specific to this shop and using its token
     shop_session = sfy.Session(shop_url, '2019-04', token)
-    # TODO: After install/auth return the homepage of the app
-    # that will be embedded in the user's store.
-    # make a shop request:
-    sfy.ShopifyResource.activate_session(shop_session)
-    shop = sfy.Shop.current()
-    # return(shop)
-    client = sfy.GraphQL()
-    query = '''
-        {
-          shop {
-            name
-            id
-          }
-        }
-      '''
-    # all_customers = None
-    # with open('customers.json', 'r') as f:
-    #     all_customers = json.load(f)
-    # print(type(all_customers[0]['ContactFirstName']))
-    # cust = list(map(upload_customer,all_customers, [shop_session]*len(all_customers)))
-    # # result = client.execute(query)
-    # # return render_template('index.html', result=result)
-    # shopRequestURL = 'https://' + request.args.get('shop') +'/admin/api/2019-04/products.json'
-    # shopRequestHeaders = {'X-Shopify-Access-Token' : token}
-    # return(requests.get(shopRequestURL,headers=shopRequestHeaders).json())
-    # return('Successfully redirected')
-    # return cust
-    # fnl, lnl = generate_fake_customer_data(10)
-    # results = upload_all_customers(fnl, lnl)
-    product_results = upload_product_data('Test-o-rama v 2.0', 10)
-    # pid = product_results['data']['productCreate']['product']['id']#.split('/')[-1]
-    # variant_results = generate_fake_variant(pid)
-    return(product_results)
+    # activate the sesstion (not necessary until we're going to do something with a resource)
+    # sfy.ShopifyResource.activate_session(shop_session)
+
+    # send user to home page
+    return(redirect(url_for('index')))
