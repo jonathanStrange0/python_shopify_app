@@ -130,8 +130,8 @@ def upload_product_data(prod_name, max_variants=10):
     # print(product_results)
     pid = product_results['data']['productCreate']['product']['id']
     for v in range(random.randint(0,max_variants)):
-        print(v)
-        print(json.loads(generate_fake_variant(pid,"Variant Test generate with GraphQL {}".format(v), "variant: {}".format(v), "6.69", "2.38")))
+        generate_fake_variant(pid,"Variant Test generate with GraphQL {}".format(v),\
+                                    "variant: {}".format(v), "6.69", "2.38")
     return product_results
 
 def generate_fake_variant(producId, option, variant_sku, variant_price, variant_cost):

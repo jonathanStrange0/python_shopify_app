@@ -9,7 +9,6 @@ def shopify_auth_required(function):
     @wraps(function)
     def decorated_function(*args, **kwargs):
         load_dotenv()
-        #TODO add authorization code here
         if 'shopify_token' not in session:
             shop_url = request.args.get('shop')
             shopify.Session.setup(
