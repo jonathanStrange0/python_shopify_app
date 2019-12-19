@@ -5,10 +5,11 @@ from app.decorators import shopify_auth_required
 from dotenv import load_dotenv
 import os, requests, json
 from pprint import pprint
-from app.graphql_uploads import upload_customer
-from app.generate_fake_shopify_data import generate_fake_customer_data, upload_all_customers,\
-                                upload_customer_data, upload_product_data, generate_fake_variant, create_fake_products_and_variants
+from app.customers import generate_fake_customer_data, upload_all_customers, upload_customer_data
+from app.products import upload_product_data, generate_fake_variant, create_fake_products_and_variants
 from app.forms import FakeDataForm
+
+
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 def index():
@@ -48,6 +49,7 @@ def shopify():
         #Define the access scopes the app would like to have
         scope = ["write_products", "read_products",\
                     'read_orders','write_orders',\
+                    'write_draft_orders', 'read_draft_orders', \
                      'write_customers','read_customers'] #may add more later
 
         #Generate the permissions url:
