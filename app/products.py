@@ -10,34 +10,7 @@ def upload_product_data(prod_name, max_variants=10):
         returns:
          - graphQL post result containint the product id, shop id, and any errors
     """
-    # product_mutation = '''mutation {
-                        #             productCreate(input: {
-                        #                 descriptionHtml: "test product generated via GraphQL",
-                        #                 title: "A Test Product",
-                        #                 variants: {
-                        #                     price:"10.95",
-                        #                     sku: "GQLT1",
-                        #                     inventoryItem: {
-                        #                         cost: "4.57"
-                        #                     }
-                        #                 }
-                        #             })
-                        #             {
-                        #                 product{
-                        #                     id
-                        #                 }
-                        #                 shop{
-                        #                     id
-                        #                 }
-                        #                 userErrors{
-                        #                     field
-                        #                     message
-                        #                 }
-                        #             }
-                        #     }
-                        #
-                        # '''
-
+    
     product_mutation = '''mutation {
                                     productCreate(input: {
                                         descriptionHtml: "test product generated via GraphQL",
