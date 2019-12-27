@@ -5,9 +5,10 @@ from app.decorators import shopify_auth_required
 from dotenv import load_dotenv
 import os, requests, json
 from pprint import pprint
-from app.customers import generate_fake_customer_data, upload_all_customers, upload_customer_data
+from app.customers import generate_fake_customer_data, upload_all_customers, upload_customer_data, delete_customer
 from app.products import upload_product_data, generate_fake_variant, create_fake_products_and_variants
 from app.forms import FakeDataForm
+from app.models import Customer
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -85,3 +86,12 @@ def callback():
 
     # send user to home page
     return(redirect(url_for('index')))
+
+@app.route('/_delete_customers')
+def _delete_customers():
+    shop_session = sfy.Session(session['shop_url'], '2019-04', session['token'])
+    # activate the shopify session to use resources.
+    sfy.ShopifyResource.activate_session(shop_session)
+    customers = Customer.query.all()
+    for c in customers:
+        delete_customer(c.gid)
