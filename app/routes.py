@@ -1,14 +1,14 @@
 from app import app
 import shopify as sfy
-from flask import session, redirect, url_for, request, current_app, render_template
+from flask import session, redirect, url_for, request, current_app, render_template, jsonify
 from app.decorators import shopify_auth_required
 from dotenv import load_dotenv
 import os, requests, json
 from pprint import pprint
 from app.customers import generate_fake_customer_data, upload_all_customers, upload_customer_data, delete_customer
-from app.products import upload_product_data, generate_fake_variant, create_fake_products_and_variants
+from app.products import upload_product_data, generate_fake_variant, create_fake_products_and_variants, delete_products
 from app.forms import FakeDataForm
-from app.models import Customer
+from app.models import Customer, Product
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -95,3 +95,14 @@ def _delete_customers():
     customers = Customer.query.all()
     for c in customers:
         delete_customer(c.gid)
+    return(jsonify('ok')) #this makes the browser happy on the final call, no 500 error
+
+@app.route('/_delete_products')
+def _delete_products():
+    shop_session = sfy.Session(session['shop_url'], '2019-04', session['token'])
+    # activate the shopify session to use resources.
+    sfy.ShopifyResource.activate_session(shop_session)
+    products = Product.query.all()
+    for p in products:
+        delete_products(p.gid)
+    return(jsonify('ok')) #this makes the browser happy on the final call, no 500 error

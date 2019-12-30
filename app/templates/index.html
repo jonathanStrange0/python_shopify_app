@@ -15,7 +15,32 @@
 			<p> {{ form.submit_button }}
 		</div>
 	</form>
-	<a type=button href="/_delete_customers">Delete Customers</a>
+	<button id="delete_customer_button">Delete Customers</button>
+	<button id="delete_Products_button">Delete Products</button>
 
+	<script>
+		let delete_btn = document.getElementById('delete_customer_button');
+		delete_btn.onclick = function(){
+			if (confirm('Do you really want to delete all the customer information you created?')){
+				// console.log("test");
+				fetch('/_delete_customers').then(function(){
+					location.replace('/index' );
+					// alert('Your Item Has Been Deleted.')
+				});
+			}
+		};
+	</script>
+	<script>
+		let delete_prod_btn = document.getElementById('delete_Products_button');
+		delete_prod_btn.onclick = function(){
+			if (confirm('Do you really want to delete all the product information you created?')){
+				// console.log("test");
+				fetch('/_delete_products').then(function(){
+					location.replace('/index' );
+
+				});
+			}
+		};
+	</script>
 
   {% endblock %}
