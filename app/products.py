@@ -99,6 +99,7 @@ def generate_fake_variant(productId, option, variant_sku, variant_price, variant
     return var_results
 
 def create_fake_products_and_variants(num_prod, max_variants):
+    #TODO: For new products, start the numbering sequence at the last num in database.
     prod_name_list = ['Test Product Num: {}'.format(x) for x in\
                                                 range(0,num_prod)]
 
