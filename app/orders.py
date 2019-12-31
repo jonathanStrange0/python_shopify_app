@@ -36,15 +36,17 @@ def gen_order(customer_gid, variant_list):
     line_items_string = ''
     for item in variant_list:
         line_item = gen_order_line_item(item[0].gid, item[1])
-        line_items_string += ' {}, '.format(line_item)
+        line_items_string += '{variantId:  "%s",  quantity: %i }' %\
+                            (line_item['variantId'], line_item['quantity'])
     print(line_items_string)
 
     draft_order = '''
                 input: {
                     customerId: "''' + customer_gid + '''",
-                    lineItems:"{'''+ line_items_string +'''}"
+                    lineItems:['''+ line_items_string +''']
                 }
                 '''
+    pprint(draft_order)
     order_mutation = '''mutation {
                                     draftOrderCreate(''' + draft_order + ''')
                                         {
@@ -58,10 +60,11 @@ def gen_order(customer_gid, variant_list):
                                         }
                                     }
                             '''
+    pprint(order_mutation)
     client = sfy.GraphQL()
     result = client.execute(order_mutation)
 
-    pprint(json.dumps(result))
+    pprint(json.loads(result))
     # pass
 
 def gen_line_item_list(num_orders, max_line_items):
@@ -92,8 +95,9 @@ def gen_order_line_item(variant_id, quantity):
     #             '''
     line_item = {}
     line_item['variantId'] = variant_id
-    line_item['quantity'] = str(quantity)
-    return(json.dumps(line_item))
+    line_item['quantity'] = quantity
+    # return(json.dumps(line_item))
+    return(line_item)
 
 def gen_product_list(line_item_list):
     """

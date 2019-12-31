@@ -113,5 +113,5 @@ def _create_order():
     shop_session = sfy.Session(session['shop_url'], '2019-04', session['token'])
     # activate the shopify session to use resources.
     sfy.ShopifyResource.activate_session(shop_session)
-    generate_orders(1, 5, 10)
+    generate_orders(1, 1, 10)
     return(jsonify('ok')) #this makes the browser happy on the final call, no 500 error
