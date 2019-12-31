@@ -2,6 +2,7 @@ import shopify as sfy
 import json, random
 import numpy as np
 from app.models import Customer, Product, Variant
+from pprint import pprint
 
 def generate_orders(num_orders, max_line_items, max_qty_sold):
     """
@@ -35,7 +36,7 @@ def gen_order(customer_gid, variant_list):
     line_items_string = ''
     for item in variant_list:
         line_item = gen_order_line_item(item[0].gid, item[1])
-        line_items_string += ' {} '.format(line_item)
+        line_items_string += ' {}, '.format(line_item)
     print(line_items_string)
 
     draft_order = '''
@@ -57,8 +58,10 @@ def gen_order(customer_gid, variant_list):
                                         }
                                     }
                             '''
+    client = sfy.GraphQL()
+    result = client.execute(order_mutation)
 
-
+    pprint(json.dumps(result))
     # pass
 
 def gen_line_item_list(num_orders, max_line_items):
