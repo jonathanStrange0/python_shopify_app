@@ -17,6 +17,7 @@
 	</form>
 	<button id="delete_customer_button">Delete Customers</button>
 	<button id="delete_Products_button">Delete Products</button>
+	<button id="create_orders_button">Create Order</button>
 
 	<script>
 		let delete_btn = document.getElementById('delete_customer_button');
@@ -42,5 +43,16 @@
 			}
 		};
 	</script>
+	<script>
+		let create_order_btn = document.getElementById('create_orders_button');
+		create_order_btn.onclick = function(){
+			if (confirm('Do you really want to add a new draft order?')){
+				// console.log("test");
+				fetch('/_create_order').then(function(){
+					location.replace('/index' );
 
+				});
+			}
+		};
+	</script>
   {% endblock %}

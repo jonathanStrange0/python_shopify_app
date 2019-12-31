@@ -7,6 +7,7 @@ import os, requests, json
 from pprint import pprint
 from app.customers import generate_fake_customer_data, upload_all_customers, upload_customer_data, delete_customer
 from app.products import upload_product_data, generate_fake_variant, create_fake_products_and_variants, delete_products
+from app.orders import generate_orders
 from app.forms import FakeDataForm
 from app.models import Customer, Product
 
@@ -105,4 +106,12 @@ def _delete_products():
     products = Product.query.all()
     for p in products:
         delete_products(p.gid)
+    return(jsonify('ok')) #this makes the browser happy on the final call, no 500 error
+
+@app.route('/_create_order')
+def _create_order():
+    shop_session = sfy.Session(session['shop_url'], '2019-04', session['token'])
+    # activate the shopify session to use resources.
+    sfy.ShopifyResource.activate_session(shop_session)
+    generate_orders(1, 1, 1)
     return(jsonify('ok')) #this makes the browser happy on the final call, no 500 error
