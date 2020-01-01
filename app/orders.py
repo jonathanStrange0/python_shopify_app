@@ -12,9 +12,9 @@ def generate_orders(num_orders, max_line_items, max_qty_sold):
     customer_list = gen_customer_list(num_orders)
     random.shuffle(customer_list)
     line_item_list = gen_line_item_list(num_orders, max_line_items)
-    print('line item list: ', line_item_list)
+    # print('line item list: ', line_item_list)
     variant_detail_list = gen_product_list(line_item_list)
-    print('variant detail list: ', variant_detail_list)
+    # print('variant detail list: ', variant_detail_list)
     random.shuffle(variant_detail_list)
     # vdl = [[x[0]] * x[2] for x in variant_detail_list]
     # vdl = [gid for gid_list in vdl for gid in gid_list]
@@ -22,10 +22,10 @@ def generate_orders(num_orders, max_line_items, max_qty_sold):
     for i in range(num_orders):
         customer_gid = customer_list.pop().gid
         num_vars = random.choice(line_item_list)
-        print('number of variants on the order: ', num_vars)
+        # print('number of variants on the order: ', num_vars)
         variant_list = [[random.choice(variant_detail_list), random.choice(range(1,max_qty_sold + 1))] \
                                                         for x in range(0,num_vars)]
-        print(variant_list)
+        # print(variant_list)
         gen_order(customer_gid, variant_list)
 
 
@@ -38,7 +38,7 @@ def gen_order(customer_gid, variant_list):
         line_item = gen_order_line_item(item[0].gid, item[1])
         line_items_string += '{variantId:  "%s",  quantity: %i }' %\
                             (line_item['variantId'], line_item['quantity'])
-    print(line_items_string)
+    # print(line_items_string)
 
     draft_order = '''
                 input: {
@@ -46,7 +46,7 @@ def gen_order(customer_gid, variant_list):
                     lineItems:['''+ line_items_string +''']
                 }
                 '''
-    pprint(draft_order)
+    # pprint(draft_order)
     order_mutation = '''mutation {
                                     draftOrderCreate(''' + draft_order + ''')
                                         {
@@ -60,12 +60,42 @@ def gen_order(customer_gid, variant_list):
                                         }
                                     }
                             '''
+    # pprint(order_mutation)
+    client = sfy.GraphQL()
+    result = json.loads(client.execute(order_mutation))
+
+    pprint(result)
+    order_id = result['data']['draftOrderCreate']['draftOrder']['id']
+    complete_draft_order(order_id)
+
+
+def complete_draft_order(order_gid):
+    """
+        Take any draft order id and complete it using a GQL request
+    """
+    print('draft order gid: ', order_gid)
+    draft_order = '''
+                    id: "''' + order_gid + '''"
+                '''
+
+    order_mutation = '''mutation {
+                                    draftOrderComplete(''' + draft_order + ''')
+                                        {
+                                            draftOrder {
+                                                        id
+                                                    }
+                                            userErrors {
+                                                        field
+                                                        message
+                                                    }
+                                        }
+                                    }
+                            '''
     pprint(order_mutation)
     client = sfy.GraphQL()
-    result = client.execute(order_mutation)
+    result = json.loads(client.execute(order_mutation))
 
-    pprint(json.loads(result))
-    # pass
+    pprint(result)
 
 def gen_line_item_list(num_orders, max_line_items):
     """
