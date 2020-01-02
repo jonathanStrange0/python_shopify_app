@@ -1,19 +1,29 @@
-<html>
-    <head>
-      <meta charset="utf-8"/>
+{% extends 'bootstrap/base.html' %}
+
+
+  {% block titile%}
       {% if title %}
-      <title>{{ title }} - Python Shopify Test</title>
+        {{ title }} - Python Shopify Test
       {% else %}
-      <title>testing a flask embedded shopify app</title>
+        testing a flask embedded shopify app
       {% endif %}
-    </head>
-    <body>
-        <div>
-          <a href="/index">Home</a>
-          <!-- <a href="/sample_labels">Print Sample Labels</a>
-          <a href="/new_product">Create New Products</a> -->
-        </div>
-        <hr>
-        {% block content %}{% endblock %}
-    </body>
-</html>
+  {% endblock %}
+
+  {% block navbar %}
+  {{nav.fake_data.render()}}
+  {% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-info" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        {# application content needs to be provided in the app_content block #}
+        {% block app_content %}{% endblock %}
+    </div>
+{% endblock %}

@@ -1,23 +1,16 @@
 {% extends "base.html" %}
-	{% block content %}
-	<form action="" method="post">
-		{{ form.hidden_tag() }}
-		{{ form.csrf_token }}
-		<div>
-			<p>
-				{{ form.number_of_customers_field.label }}	 <br>
-				{{ form.number_of_customers_field }}
-			</p>
-			<p>
-				{{ form.number_of_products_field.label }}<br>
-				{{ form.number_of_products_field }} <br>
-			</p>
-			<p> {{ form.submit_button }}
-		</div>
-	</form>
-	<button id="delete_customer_button">Delete Customers</button>
-	<button id="delete_Products_button">Delete Products</button>
-	<button id="create_orders_button">Create Order</button>
+{% import 'bootstrap/wtf.html' as wtf %}
+
+	{% block app_content %}
+			<div class="row">
+        <div class="col-md-4">
+            {{ wtf.quick_form(form) }}
+        </div>
+    </div>
+
+	<button id="delete_customer_button" class='btn btn-primary'>Delete Customers</button>
+	<button id="delete_Products_button" class='btn btn-primary'>Delete Products</button>
+	<button id="create_orders_button" class='btn btn-primary'>Create Order</button>
 
 	<script>
 		let delete_btn = document.getElementById('delete_customer_button');

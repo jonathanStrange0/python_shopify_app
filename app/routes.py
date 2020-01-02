@@ -10,7 +10,13 @@ from app.products import upload_product_data, generate_fake_variant, create_fake
 from app.orders import generate_orders
 from app.forms import FakeDataForm
 from app.models import Customer, Product
+from flask_nav.elements import Navbar, View
+from app import nav
 
+nav.register_element('fake_data', Navbar(
+    View('Home', '.index'),
+    View('orders', '.index'),
+))
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
