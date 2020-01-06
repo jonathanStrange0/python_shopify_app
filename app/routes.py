@@ -5,6 +5,7 @@ from app.decorators import shopify_auth_required
 from dotenv import load_dotenv
 import os, requests, json
 from pprint import pprint
+from datetime import datetime
 from app.customers import generate_fake_customer_data, upload_all_customers, upload_customer_data, delete_customer
 from app.products import upload_product_data, generate_fake_variant, create_fake_products_and_variants, delete_products
 from app.orders import generate_orders
@@ -119,5 +120,5 @@ def _create_order():
     shop_session = sfy.Session(session['shop_url'], '2019-04', session['token'])
     # activate the shopify session to use resources.
     sfy.ShopifyResource.activate_session(shop_session)
-    generate_orders(1, 1, 10)
+    generate_orders(1, 1, 10, start_date=datetime(2015,1,1), end_date=datetime.today())
     return(jsonify('ok')) #this makes the browser happy on the final call, no 500 error

@@ -1,10 +1,11 @@
 import shopify as sfy
 import json, random
 import numpy as np
+import pandas as pd
 from app.models import Customer, Product, Variant
 from pprint import pprint
 
-def generate_orders(num_orders, max_line_items, max_qty_sold):
+def generate_orders(num_orders, max_line_items, max_qty_sold, start_date, end_date):
     """
         given the number of orders, push draft orders to shopify and complete them
     """
@@ -19,6 +20,10 @@ def generate_orders(num_orders, max_line_items, max_qty_sold):
     # vdl = [[x[0]] * x[2] for x in variant_detail_list]
     # vdl = [gid for gid_list in vdl for gid in gid_list]
     # print(vdl)
+
+    # generate random date for completion of the order
+    date_string = choose_date_in_range(start_date, end_date)
+
     for i in range(num_orders):
         customer_gid = customer_list.pop().gid
         num_vars = random.choice(line_item_list)
@@ -26,10 +31,10 @@ def generate_orders(num_orders, max_line_items, max_qty_sold):
         variant_list = [[random.choice(variant_detail_list), random.choice(range(1,max_qty_sold + 1))] \
                                                         for x in range(0,num_vars)]
         # print(variant_list)
-        gen_order(customer_gid, variant_list)
+        gen_order(customer_gid, variant_list, date_string)
 
 
-def gen_order(customer_gid, variant_list):
+def gen_order(customer_gid, variant_list, completed_date):
     """
         Creates a single order
     """
@@ -43,6 +48,13 @@ def gen_order(customer_gid, variant_list):
     draft_order = '''
                 input: {
                     customerId: "''' + customer_gid + '''",
+                    metafields: {
+                        description: "date",
+                        key: "date",
+                        namespace: "testing date"
+                        value: "''' + completed_date + '''",
+                        valueType: STRING
+                    },
                     lineItems:['''+ line_items_string +''']
                 }
                 '''
@@ -141,7 +153,6 @@ def gen_product_list(line_item_list):
     # varian_detail_list = np.concatenate((np.array(variant_list_w_prob), \
                     # np.array(num_variant_purchases_list).reshape(-1,1)), axis=1).tolist()
     # varian_detail_list shape ['variant gid', 'probability of being picked', 'number of times variant is picked']
-
     variant_detail_list = np.random.choice(variants_list, total_line_items, variant_list_prob).tolist()
     return(variant_detail_list)
 
@@ -153,5 +164,9 @@ def apply_pareto(list):
     distribution = np.array([random.paretovariate(1.16) for x in range(0,len(list))])
     distribution /= np.sum(distribution)
 
-    # return np.concatenate((np.array(list).reshape(-1,1), np.array(distribution).reshape(-1,1)), axis=1).tolist()
+    # return np.concatenate((np.array(list).reshape(-1,1), np.array(distribution).reshape(-1,1)),axis=1).tolist()
     return list, distribution.flatten().tolist()
+
+def choose_date_in_range(start_date, end_date):
+    date = random.choice(pd.date_range(start=start_date, end=end_date, freq='D')).to_pydatetime()
+    return date.isoformat()
