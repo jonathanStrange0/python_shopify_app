@@ -2,7 +2,7 @@ import shopify as sfy
 import json, random
 import numpy as np
 import pandas as pd
-from app.models import Customer, Product, Variant
+from app.models import Customer, Product, Variant, Order
 from pprint import pprint
 
 def generate_orders(num_orders, max_line_items, max_qty_sold, start_date, end_date):
@@ -78,6 +78,8 @@ def gen_order(customer_gid, variant_list, completed_date):
 
     pprint(result)
     order_id = result['data']['draftOrderCreate']['draftOrder']['id']
+    db.session.add(Order(gid=order_id))
+    db.session.commit()
     complete_draft_order(order_id)
 
 
