@@ -8,44 +8,11 @@
         </div>
     </div>
 
-	<button id="delete_customer_button" class='btn btn-primary'>Delete Customers</button>
-	<button id="delete_Products_button" class='btn btn-primary'>Delete Products</button>
-	<button id="create_orders_button" class='btn btn-primary'>Create Order</button>
 
-	<script>
-		let delete_btn = document.getElementById('delete_customer_button');
-		delete_btn.onclick = function(){
-			if (confirm('Do you really want to delete all the customer information you created?')){
-				// console.log("test");
-				fetch('/_delete_customers').then(function(){
-					location.replace('/index' );
-					// alert('Your Item Has Been Deleted.')
-				});
-			}
-		};
-	</script>
-	<script>
-		let delete_prod_btn = document.getElementById('delete_Products_button');
-		delete_prod_btn.onclick = function(){
-			if (confirm('Do you really want to delete all the product information you created?')){
-				// console.log("test");
-				fetch('/_delete_products').then(function(){
-					location.replace('/index' );
 
-				});
-			}
-		};
-	</script>
-	<script>
-		let create_order_btn = document.getElementById('create_orders_button');
-		create_order_btn.onclick = function(){
-			if (confirm('Do you really want to add a new draft order?')){
-				// console.log("test");
-				fetch('/_create_order').then(function(){
-					location.replace('/index' );
 
-				});
-			}
-		};
-	</script>
-  {% endblock %}
+
+
+
+	
+	{% endblock %}

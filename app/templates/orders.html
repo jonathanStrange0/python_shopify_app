@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+  <button id="create_orders_button" class='btn btn-primary'>Create Order</button>
+
+
+  <script>
+    let create_order_btn = document.getElementById('create_orders_button');
+    create_order_btn.onclick = function(){
+      if (confirm('Do you really want to add a new draft order?')){
+        // console.log("test");
+        fetch('/_create_order').then(function(){
+          location.replace('/index' );
+
+        });
+      }
+    };
+  </script>
+{% endblock %}
