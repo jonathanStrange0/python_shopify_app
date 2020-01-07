@@ -1,20 +1,25 @@
 {% extends "base.html" %}
 {% import 'bootstrap/wtf.html' as wtf %}
 {% block app_content %}
-
+  <div class="row">
+    <div class="col-md-4">
+        {{ wtf.quick_form(form) }}
+    </div>
+  </div>
   <button id="delete_customer_button" class='btn btn-primary'>Delete Customers</button>
 
-    <script>
-  let delete_btn = document.getElementById('delete_customer_button');
-  delete_btn.onclick = function(){
-    if (confirm('Do you really want to delete all the customer information you created?')){
-      // console.log("test");
-      fetch('/_delete_customers').then(function(){
-        location.replace('/index' );
-        // alert('Your Item Has Been Deleted.')
-      });
-    }
-  };
+  <script>
+
+    let delete_btn = document.getElementById('delete_customer_button');
+    delete_btn.onclick = function(){
+      if (confirm('Do you really want to delete all the customer information you created?')){
+        // console.log("test");
+        fetch('/_delete_customers').then(function(){
+          location.replace('/index' );
+          // alert('Your Item Has Been Deleted.')
+        });
+      }
+    };
   </script>
 
 {% endblock %}

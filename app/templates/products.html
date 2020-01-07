@@ -2,7 +2,14 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
+  <div class="row">
+    <div class="col-md-4">
+        {{ wtf.quick_form(form) }}
+    </div>
+  </div>
+
   <button id="delete_Products_button" class='btn btn-primary'>Delete Products</button>
+
   <script>
     let delete_prod_btn = document.getElementById('delete_Products_button');
     delete_prod_btn.onclick = function(){

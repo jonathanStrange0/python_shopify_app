@@ -9,14 +9,16 @@ from datetime import datetime
 from app.customers import generate_fake_customer_data, upload_all_customers, upload_customer_data, delete_customer
 from app.products import upload_product_data, generate_fake_variant, create_fake_products_and_variants, delete_products
 from app.orders import generate_orders
-from app.forms import FakeDataForm
+from app.forms import CustomerForm, ProductForm, OrderForm
 from app.models import Customer, Product
 from flask_nav.elements import Navbar, View
 from app import nav
 
 nav.register_element('fake_data', Navbar(
     View('Home', '.index'),
-    View('orders', '.index'),
+    View('Customers', '.customers'),
+    View('Products', '.products'),
+    View('Orders', '.orders'),
 ))
 
 @app.route('/', methods=['GET', 'POST'])
@@ -24,14 +26,14 @@ nav.register_element('fake_data', Navbar(
 def index():
     shop_session = sfy.Session(session['shop_url'], '2019-04', session['token'])
     # activate the shopify session to use resources.
-    sfy.ShopifyResource.activate_session(shop_session)
-    form = FakeDataForm()
-    if request.method == 'POST':
-        if form.validate_on_submit():
-            generate_fake_customer_data(form.number_of_customers_field.data)
-            create_fake_products_and_variants(form.number_of_products_field.data, 5)
-
-    return render_template('index.html', form=form)
+    # sfy.ShopifyResource.activate_session(shop_session)
+    # form = FakeDataForm()
+    # if request.method == 'POST':
+    #     if form.validate_on_submit():
+    #         generate_fake_customer_data(form.number_of_customers_field.data)
+    #         create_fake_products_and_variants(form.number_of_products_field.data, 5)
+    #
+    return render_template('index.html')
 
 
 @shopify_auth_required
@@ -94,6 +96,56 @@ def callback():
 
     # send user to home page
     return(redirect(url_for('index')))
+
+#####################################################
+###### Create fake data in the following methods ####
+#####################################################
+
+@app.route('/customers', methods=['GET', 'POST'])
+def customers():
+    form = CustomerForm()
+    shop_session = sfy.Session(session['shop_url'], '2019-04', session['token'])
+    # activate the shopify session to use resources.
+    sfy.ShopifyResource.activate_session(shop_session)
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            generate_fake_customer_data(form.number_of_customers_field.data)
+            # create_fake_products_and_variants(form.number_of_products_field.data, 5)
+
+    return render_template('customers.html', form=form)
+
+@app.route('/products', methods=['GET', 'POST'])
+def products():
+    form = ProductForm()
+    shop_session = sfy.Session(session['shop_url'], '2019-04', session['token'])
+    # activate the shopify session to use resources.
+    sfy.ShopifyResource.activate_session(shop_session)
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            # generate_fake_customer_data(form.number_of_customers_field.data)
+            create_fake_products_and_variants(form.number_of_products_field.data, 5)
+
+    return render_template('products.html', form=form)
+
+@app.route('/orders', methods=['GET', 'POST'])
+def orders():
+    form = OrderForm()
+    shop_session = sfy.Session(session['shop_url'], '2019-04', session['token'])
+    # activate the shopify session to use resources.
+    sfy.ShopifyResource.activate_session(shop_session)
+    if request.method == 'POST':
+        if form.validate_on_submit():
+                generate_orders(form.number_of_orders_field.data,\
+                                form.number_of_line_items_field.data,\
+                                form.max_qty_sold_field.data,\
+                                form.start_date.data,\
+                                form.end_date.data)
+
+    return render_template('orders.html', form=form)
+
+#####################################################
+###### Delete fake data in the following methods ####
+#####################################################
 
 @app.route('/_delete_customers')
 def _delete_customers():
