@@ -5,8 +5,9 @@ import pandas as pd
 from app.models import Customer, Product, Variant, Order
 from pprint import pprint
 from app import db
+from concurrent.futures import ThreadPoolExecutor
 
-def generate_orders(num_orders, max_line_items, max_qty_sold, start_date, end_date):
+def generate_orders(num_orders, max_line_items, max_qty_sold, start_date, end_date, shop_url, shop_token):
     """
         given the number of orders, push draft orders to shopify and complete them
     """
@@ -25,21 +26,24 @@ def generate_orders(num_orders, max_line_items, max_qty_sold, start_date, end_da
     list_of_variant_lists = []
     date_string_list = []
     customers = []
+    url_list = [shop_url] * num_orders
+    token_list = [shop_token] * num_orders
     for i in range(num_orders):
         customers.append( customer_list.pop().gid)
         num_vars = random.choice(line_item_list)
         # print('number of variants on the order: ', num_vars)
-        variant_list = [[random.choice(variant_detail_list), random.choice(range(1,max_qty_sold + 1))] \
-                                                        for x in range(0,num_vars)]
+        variant_list = [[random.choice(variant_detail_list),\
+                        random.choice(range(1,max_qty_sold + 1))] \
+                                                for x in range(0,num_vars)]
         list_of_variant_lists.append(variant_list)
         # generate random date for completion of the order
         date_string = choose_date_in_range(start_date, end_date)
         date_string_list.append(date_string)
         # print(variant_list)
+    ex = ThreadPoolExecutor(max_workers = 4)
+    orders = ex.map(gen_order, customers, list_of_variant_lists, date_string_list, url_list, token_list)#(customer_gid, variant_list, date_string)
 
-    orders = map(gen_order, customers, list_of_variant_lists, date_string_list)#(customer_gid, variant_list, date_string)
-
-def gen_order(customer_gid, variant_list, completed_date):
+def gen_order(customer_gid, variant_list, completed_date, shop_url, shop_token):
     """
         Creates a single order
     """
@@ -78,6 +82,9 @@ def gen_order(customer_gid, variant_list, completed_date):
                                     }
                             '''
     # pprint(order_mutation)
+    shop_session = sfy.Session(shop_url, '2019-04', shop_token)
+    # activate the shopify session to use resources.
+    sfy.ShopifyResource.activate_session(shop_session)
     client = sfy.GraphQL()
     result = json.loads(client.execute(order_mutation))
 

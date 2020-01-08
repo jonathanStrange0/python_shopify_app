@@ -139,7 +139,9 @@ def orders():
                                 form.number_of_line_items_field.data,\
                                 form.max_qty_sold_field.data,\
                                 form.start_date.data,\
-                                form.end_date.data)
+                                form.end_date.data,\
+                                session['shop_url'],\
+                                session['token'])
 
     return render_template('orders.html', form=form)
 
