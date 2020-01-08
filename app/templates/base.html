@@ -1,5 +1,13 @@
 {% extends 'bootstrap/base.html' %}
-
+{% block styles %}
+{{super()}}
+<link rel="stylesheet"
+      href="https://unpkg.com/@shopify/polaris@4.10.2/styles.min.css">
+{% endblock %}
+<!-- <link
+  rel="stylesheet"
+  href="https://unpkg.com/@shopify/polaris@4.10.2/styles.min.css"
+/> -->
 
   {% block titile%}
       {% if title %}

@@ -17,5 +17,5 @@ class Customer(db.Model):
     first_name = db.Column( db.String(64), index=True)
     last_name = db.Column( db.String(64), index=True)
 
-class order(db.Model):
+class Order(db.Model):
     gid = db.Column(db.String(64), primary_key=True)

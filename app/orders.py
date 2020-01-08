@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from app.models import Customer, Product, Variant, Order
 from pprint import pprint
+from app import db
 
 def generate_orders(num_orders, max_line_items, max_qty_sold, start_date, end_date):
     """
@@ -21,18 +22,22 @@ def generate_orders(num_orders, max_line_items, max_qty_sold, start_date, end_da
     # vdl = [gid for gid_list in vdl for gid in gid_list]
     # print(vdl)
 
-    # generate random date for completion of the order
-    date_string = choose_date_in_range(start_date, end_date)
-
+    list_of_variant_lists = []
+    date_string_list = []
+    customers = []
     for i in range(num_orders):
-        customer_gid = customer_list.pop().gid
+        customers.append( customer_list.pop().gid)
         num_vars = random.choice(line_item_list)
         # print('number of variants on the order: ', num_vars)
         variant_list = [[random.choice(variant_detail_list), random.choice(range(1,max_qty_sold + 1))] \
                                                         for x in range(0,num_vars)]
+        list_of_variant_lists.append(variant_list)
+        # generate random date for completion of the order
+        date_string = choose_date_in_range(start_date, end_date)
+        date_string_list.append(date_string)
         # print(variant_list)
-        gen_order(customer_gid, variant_list, date_string)
 
+    orders = map(gen_order, customers, list_of_variant_lists, date_string_list)#(customer_gid, variant_list, date_string)
 
 def gen_order(customer_gid, variant_list, completed_date):
     """
