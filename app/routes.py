@@ -168,7 +168,7 @@ def _delete_products():
     for p in products:
         delete_products(p.gid)
     return(jsonify('ok')) #this makes the browser happy on the final call, no 500 error
-
+id
 @app.route('/_create_order')
 def _create_order():
     shop_session = sfy.Session(session['shop_url'], '2019-04', session['token'])
@@ -176,3 +176,11 @@ def _create_order():
     sfy.ShopifyResource.activate_session(shop_session)
     generate_orders(1, 1, 10, start_date=datetime(2015,1,1), end_date=datetime.today())
     return(jsonify('ok')) #this makes the browser happy on the final call, no 500 error
+
+from app.get_orders import get_orders
+@app.route('/_get_order')
+def _get_order():
+    shop_session = sfy.Session(session['shop_url'], '2019-04', session['token'])
+    # activate the shopify session to use resources.
+    sfy.ShopifyResource.activate_session(shop_session)
+    return jsonify(get_orders())
